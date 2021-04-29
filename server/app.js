@@ -4,6 +4,7 @@ const helmet = require('helmet')
 const createError = require("http-errors")
 require("dotenv").config()
 require("./helpers/mongodb.init")
+require('./helpers/redis.init')
 
 const app = express()
 
