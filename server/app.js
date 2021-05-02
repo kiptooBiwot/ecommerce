@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000
 // Routes
 const authRoutes = require('./routes/auth.routes')
 const categoryRoutes = require('./routes/category.routes')
+const productRoutes = require('./routes/product.routes')
 
 // middleware
 app.use(express.json())
@@ -22,6 +23,7 @@ app.use(helmet())
 
 app.use('/api/auth/', authRoutes)
 app.use('/api/categories/', categoryRoutes)
+app.use('/api/products', productRoutes)
 
 app.use(async (req, res, next) => {
   next(createError.NotFound())
