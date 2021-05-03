@@ -15,7 +15,6 @@ module.exports = {
 
   createProduct: async (req, res, next) => {
     try {
-      console.log(req.user)
       if (req.files) {
         const imageURIs = []
         const files = req.files

@@ -1,6 +1,7 @@
 const createError = require('http-errors')
 const Category = require('../models/Category.model')
 const slugify = require('slugify')
+const Cloudinary = require('../helpers/cloudinary.helper')
 
 const getNestedCategories = (categories, parentId = null) => {
   const categoryList = []
@@ -49,8 +50,16 @@ module.exports = {
   },
   createCategory: async (req, res, next) => {
     try {
+      // upload category image if any
+      let categoryImageURI
+      if (req.file) {
+        const result = await  Cloudinary.uploader.upload(req.file.path)
+        categoryImageURI = result.secure_url
+      }
+
       const categoryObject = {
         name: req.body.name,
+        categoryImage: categoryImageURI,
         slug: slugify(req.body.name)  
       }
 
