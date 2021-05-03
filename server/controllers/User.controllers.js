@@ -48,7 +48,7 @@ module.exports = {
       const { email, password } = req.body
 
       const _user = await User.findOne({ email: email })
-      if (!_user) throw createError.NotFound('You are not registered. You may want to register to get an account')
+      if (!_user) throw createError.NotFound('You are not registered. You may want to register for an account')
 
       const passwordMatch = await _user.isValidPassword(password)
       

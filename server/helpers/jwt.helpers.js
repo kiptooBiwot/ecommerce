@@ -24,7 +24,7 @@ module.exports = {
     });
   },
   verifyAccessToken: async (req, res, next) => {
-    if (!req.headers["authorization"]) throw next(createError.Unauthorized());
+    if (!req.headers["authorization"]) throw next(createError.Unauthorized('Please sign in to access this resource'));
 
     const authHeader = req.headers["authorization"];
     const token = authHeader.split(" ")[1];
@@ -32,7 +32,6 @@ module.exports = {
     try {
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       req.user = decoded;
-      console.log(`REQ.User: ${req.user}`);
       next();
     } catch (err) {
       if (err.name === "JsonwebTokenError") {
@@ -98,4 +97,18 @@ module.exports = {
       });
     });
   },
+  isAdmin: (req, res, next) => {
+    if (req.user.role === 'admin') {
+      next()
+    } else {
+      next(createError.Unauthorized('Only administrators are allowed access this resource. Thank you.'))
+    }
+  },
+  isUser: (req, res, next) => {
+    if (req.user.role === 'user') {
+      next()
+    } else {
+      next(createError.Unauthorized('This route is above your grade level!'))
+    }
+  }
 };

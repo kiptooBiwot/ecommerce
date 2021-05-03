@@ -15,7 +15,7 @@ module.exports = {
 
   createProduct: async (req, res, next) => {
     try {
-      // console.log(req.files)
+      console.log(req.user)
       if (req.files) {
         const imageURIs = []
         const files = req.files
@@ -32,7 +32,7 @@ module.exports = {
         }
         // console.log(`Image URIs: ${imageURIs}`)
 
-        const { name, price, description, productPicture, quantity, createdBy, category } = req.body
+        const { name, price, description, productPicture, quantity, category } = req.body
 
         const product = new Product({
           name,
@@ -42,8 +42,7 @@ module.exports = {
           description,
           productPicture,
           category,
-          createdBy
-          // createdBy: req.user._id
+          createdBy: req.user.id
         })
 
         product.productPicture = imageURIs
