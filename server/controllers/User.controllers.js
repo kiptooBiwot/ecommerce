@@ -1,6 +1,11 @@
 const createError = require('http-errors')
-const { signAccessToken, signRefreshToken } = require('../helpers/jwt.helpers')
+const {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} = require("../helpers/jwt.helpers");
 const User = require('../models/User.model')
+const client = require('../helpers/redis.init')
 
 
 module.exports = {
@@ -18,9 +23,23 @@ module.exports = {
     }
   },
 
+  getUser: async (req, res, next) => {
+    try {
+      // console.log(req.user);
+      // TODO: Use the login token to get the user profile back
+      const user = await User.findOne({ email: req.user.email });
+      if (!user) throw createError.NotFound("User not found");
+
+      res.json({ user: user });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   register: async (req, res, next) => {
     try {
       console.log(`We hit this route!`)
+      console.log(req.body)
       // TODO: Validate the inputs using Joi
       const userExists = await User.findOne({ email: req.body.email })
       if (userExists) throw createError.Conflict(`A user with the email ${req.body.email} exists in the system`)
@@ -66,6 +85,52 @@ module.exports = {
 
     } catch (error) {
       next(error)
+    }
+  },
+
+  refreshToken: async (req, res, next) => {
+    try {
+      const { refreshToken } = req.body;
+
+      if (!refreshToken) throw createError.BadRequest();
+      const userId = await verifyRefreshToken(refreshToken);
+      // get user from db
+      const user = await User.findOne({ _id: userId });
+
+      const accessToken = await signAccessToken(user);
+      const refreshedToken = await signRefreshToken(user);
+
+      res.send({
+        token: `Bearer ${accessToken}`,
+        refreshToken: `Bearer ${refreshedToken}`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  logout: async (req, res, next) => {
+    try {
+      const { refreshToken } = req.body;
+      // console.log(req.body);
+      if (!refreshToken) throw createError.BadRequest();
+      const userId = await verifyRefreshToken(refreshToken);
+
+      // console.log(`USER_ID: ${userId}`);
+      // Delete the refresh token from Redis
+      client.DEL(userId, (err, val) => {
+        if (err) {
+          console.log(err);
+          throw createError.InternalServerError();
+        }
+
+        // console.log(val);
+        res.send({
+          message: "Logged out!",
+        });
+      });
+    } catch (error) {
+      next(error);
     }
   }
 }

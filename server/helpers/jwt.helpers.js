@@ -86,14 +86,13 @@ module.exports = {
             reject(createError.InternalServerError());
             return;
           }
-          console.log(`REDIS REPLY: ${reply}`);
+          // console.log(`REDIS REPLY: ${reply} ${reply === token}`);
           // Check if the token matches the redis-stored token
           if (token === reply) return resolve(userId);
           // If tokens did not match
           reject(createError.Unauthorized());
-        });
-
-        resolve(userId);
+        })
+        // resolve(userId);
       });
     });
   },

@@ -1,0 +1,33 @@
+html,
+body {
+  font-family: 'Monterrat', sans-serif !important;
+}
+
+h1 {
+  color: #727475;
+  font-size: 40px;
+  line-height: 50px;
+  font-weight: bold;
+}
+
+h2 {
+  color: #727475;
+  font-size: 30px;
+  line-height: 30px;
+  font-weight: bold;
+}
+
+h3 {
+  color: #a4a4a4;
+  letter-spacing: 2px;
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: lighter;
+}
+
+p {
+  color: #a3a3a3;
+  font-size: 15px;
+  line-height: 29px;
+  overflow-x: hidden;
+}
